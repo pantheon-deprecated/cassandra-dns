@@ -18,6 +18,7 @@ class CassandraNamesResolver(common.ResolverBase):
     def _lookup(self, name, cls, type, timeout):
         log.msg("Looking up type %s records for hostname: %s" % (type, name))
         all_types = self.names.lookup(name, type)
+
         results = []
         authority = []
         additional = []
@@ -29,10 +30,14 @@ class CassandraNamesResolver(common.ResolverBase):
 
         for type, records in all_types.items():
             for data, metadata in records.items():
-                if type == MX:                    
-                    payload = dns.Record_MX(metadata["preference"], data)
-                elif type == A:
+                if type == A:
                     payload = dns.Record_A(data)
+                elif type == CNAME:  
+                    payload = dns.Record_CNAME(data)
+                elif type == MX:                    
+                    payload = dns.Record_MX(metadata["preference"], data)
+                elif type == NS:
+                    payload = dns.Record_NS(data)
                 header = dns.RRHeader(name, type=type, payload=payload, ttl=metadata["ttl"], auth=True)
                 results.append(header)
 

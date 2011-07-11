@@ -30,7 +30,7 @@ class CassandraNamesResolver(common.ResolverBase):
         for type, records in all_types.items():
             for data, metadata in records.items():
                 if type == MX:                    
-                    payload = dns.Record_MX(metadata["priority"], data)
+                    payload = dns.Record_MX(metadata["preference"], data)
                 elif type == A:
                     payload = dns.Record_A(data)
                 header = dns.RRHeader(name, type=type, payload=payload, ttl=metadata["ttl"], auth=True)

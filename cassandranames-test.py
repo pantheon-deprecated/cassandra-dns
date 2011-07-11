@@ -70,5 +70,11 @@ class TestCassandraNames(unittest.TestCase):
         data = self.names.lookup("pantheon.example.com")
         self.assertEqual(data, {})
 
+        # Insert some other records, just for fun.
+        self.names.insert("pantheon.example.com", A, "10.0.0.1", 60)
+        self.names.insert("pantheon.example.com", A, "10.0.0.2", 60)
+        self.names.insert("pantheon.example.com", MX, "10.0.0.3", 60, 10)
+        self.names.insert("pantheon.example.com", MX, "10.0.0.4", 60, 20)
+
 if __name__ == '__main__':
     unittest.main()

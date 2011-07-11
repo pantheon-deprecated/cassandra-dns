@@ -16,7 +16,7 @@ class CassandraNamesResolver(common.ResolverBase):
         common.ResolverBase.__init__(self)
 
     def _lookup(self, name, cls, type, timeout):
-        log.msg("Looking up %s records for hostname: %s" % (QUERY_TYPES[type], name))
+        log.msg("Looking up type %s records for hostname: %s" % (type, name))
         all_types = self.names.lookup(name, type)
         results = []
         authority = []

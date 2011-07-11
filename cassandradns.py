@@ -32,7 +32,8 @@ class CassandraNamesResolver(common.ResolverBase):
             for data, metadata in records.items():
                 if type == A:
                     payload = dns.Record_A(data)
-                elif type == CNAME:  
+                elif type == CNAME:
+                    # TODO: Add proper CNAME support that sends corresponding "A" records.
                     payload = dns.Record_CNAME(data)
                 elif type == MX:                    
                     payload = dns.Record_MX(metadata["preference"], data)

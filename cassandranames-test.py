@@ -41,13 +41,13 @@ class TestCassandraNames(unittest.TestCase):
         self.assertEqual(data, {})
 
         # Add an MX record.
-        self.names.insert("pantheon.example.com", MX, "192.168.0.3", priority=10)
+        self.names.insert("pantheon.example.com", MX, "192.168.0.3", preference=10)
 
         # Verify the MX record.
         data = self.names.lookup("pantheon.example.com")
-        self.assertEqual(data, {A: a_records, MX: {"192.168.0.3": {"priority": 10, "ttl": 900}}})
+        self.assertEqual(data, {A: a_records, MX: {"192.168.0.3": {"preference": 10, "ttl": 900}}})
         data = self.names.lookup("pantheon.example.com", MX)
-        self.assertEqual(data, {MX: {"192.168.0.3": {"priority": 10, "ttl": 900}}})
+        self.assertEqual(data, {MX: {"192.168.0.3": {"preference": 10, "ttl": 900}}})
 
         # Delete the A record for 192.168.0.1.
         self.names.remove("pantheon.example.com", A, "192.168.0.1")
@@ -56,7 +56,7 @@ class TestCassandraNames(unittest.TestCase):
         data = self.names.lookup("pantheon.example.com", A)
         self.assertEqual(data, {A: {"192.168.0.2": {"ttl": 60}}})
         data = self.names.lookup("pantheon.example.com", MX)
-        self.assertEqual(data, {MX: {"192.168.0.3": {"priority": 10, "ttl": 900}}})
+        self.assertEqual(data, {MX: {"192.168.0.3": {"preference": 10, "ttl": 900}}})
 
         # Delete all "MX" records and verify the deletion.
         self.names.remove("pantheon.example.com", MX)

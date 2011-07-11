@@ -49,11 +49,11 @@ class CassandraNames:
             pass
         return {}
 
-    def insert(self, fqdn, type, data, ttl=900, priority=None):
+    def insert(self, fqdn, type, data, ttl=900, preference=None):
         cf = pycassa.ColumnFamily(self.pool, "names")
         metadata = {"ttl": int(ttl)}
-        if priority is not None:
-            metadata["priority"] = int(priority)
+        if preference is not None:
+            metadata["preference"] = int(preference)
         cf.insert(fqdn, {str(type): {data: json.dumps(metadata)}})
 
     def remove(self, fqdn, type=ANY, data=None):

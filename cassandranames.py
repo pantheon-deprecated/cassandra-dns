@@ -26,11 +26,11 @@ class CassandraNames:
     def __init__(self):
         self.pool = pycassa.connect("dns")
 
-    def lookup(self, fqdn, type=None):
+    def lookup(self, fqdn, type=ANY):
         cf = pycassa.ColumnFamily(self.pool, "names")
         try:
             columns = {}
-            if type is None:
+            if type == ANY:
                 # Pull all types of records.
                 columns = dict(cf.get(fqdn))
             else:
@@ -56,9 +56,9 @@ class CassandraNames:
             metadata["priority"] = int(priority)
         cf.insert(fqdn, {str(type): {data: json.dumps(metadata)}})
 
-    def remove(self, fqdn, type=None, data=None):
+    def remove(self, fqdn, type=ANY, data=None):
         cf = pycassa.ColumnFamily(self.pool, "names")
-        if type is None:
+        if type == ANY:
             # Delete all records for the FQDN.
             cf.remove(fqdn)
         elif data is None:

@@ -1,5 +1,6 @@
 import pycassa
 import json
+from dnstypeconstants import *
 
 def install_schema(drop_first=False, rf=3):
     keyspace_name = "dns"
@@ -34,14 +35,14 @@ class CassandraNames:
                 columns = dict(cf.get(fqdn))
             else:
                 # Pull only one type of record.
-                columns = {type: dict(cf.get(fqdn, super_column=type))}
+                columns = {str(type): dict(cf.get(fqdn, super_column=str(type)))}
 
             # Convert the JSON metadata into valid Python data.
             decoded_columns = {}
             for type, entries in columns.items():
-                decoded_columns[type] = {}
+                decoded_columns[int(type)] = {}
                 for data, metadata in entries.items():
-                    decoded_columns[type][data] = json.loads(metadata)
+                    decoded_columns[int(type)][data] = json.loads(metadata)
             return decoded_columns
         except pycassa.cassandra.ttypes.NotFoundException:
             # If no records exist for the FQDN or type, fail gracefully.
@@ -53,7 +54,7 @@ class CassandraNames:
         metadata = {"ttl": int(ttl)}
         if priority is not None:
             metadata["priority"] = int(priority)
-        cf.insert(fqdn, {type: {data: json.dumps(metadata)}})
+        cf.insert(fqdn, {str(type): {data: json.dumps(metadata)}})
 
     def remove(self, fqdn, type=None, data=None):
         cf = pycassa.ColumnFamily(self.pool, "names")
@@ -62,7 +63,7 @@ class CassandraNames:
             cf.remove(fqdn)
         elif data is None:
             # Delete all records of a certain type from the FQDN.
-            cf.remove(fqdn, super_column=type)
+            cf.remove(fqdn, super_column=str(type))
         else:
             # Delete all records for a certain type and data.
-            cf.remove(fqdn, super_column=type, columns=[data])
+            cf.remove(fqdn, super_column=str(type), columns=[data])
